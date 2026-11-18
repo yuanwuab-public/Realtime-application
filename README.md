@@ -1,83 +1,153 @@
-# リアルタイムデータ基盤 — 職務実績ポートフォリオ
+# Real-Time Data Platform — Professional Portfolio
 
-大規模インターネットサービスにおいて、リアルタイムデータ処理、オンライン推論連携、バッチ／ワークフロー基盤の開発・運用に携わっています。主な担当は、Java / Apache Flink を中心としたストリーミングアプリケーションと、Python / Apache Airflow を中心としたデータパイプラインです。
+[English](README.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md)
 
-> 本資料は公開用です。守秘義務を遵守するため、会社名、サービス名、内部システム名、データ定義、構成値、性能値、障害情報などは記載せず、業務内容を一般化しています。
+Diagrams use English labels in all language versions.
 
-## 職務概要
+I develop and operate real-time data platforms that connect user behavior to machine learning predictions and delivery decisions for large-scale internet services. My responsibilities include Java / Apache Flink stream processing, Python / Apache Airflow data pipelines, data investigations supporting offline ML validation, and Redis and inference server operations.
 
-| 項目 | 内容 |
-| --- | --- |
-| 参画期間 | 2025年1月〜現在 |
-| 職種 | データエンジニア / バックエンドエンジニア |
-| 担当工程 | 設計、実装、単体テスト、ステージング検証、リリース、運用改善、障害調査 |
-| 主な領域 | リアルタイムストリーム処理、データエンリッチ、オンライン推論連携、データパイプライン、運用自動化 |
+> This document is for public use. To respect confidentiality obligations, it generalizes the work and omits company names, service names, internal system names, data definitions, configuration values, performance figures, and incident details.
 
-## プロジェクト 1：リアルタイムデータ収集・エンリッチ基盤
+## Role Overview
 
-複数サービスから発生するユーザー行動データをリアルタイムに処理し、後続の分析・推薦処理で利用できる形式へ変換する基盤の開発・運用を担当しました。
+| Item | Description |
+|---|---|
+| Period | January 2025–present |
+| Role | Data Engineer / Backend Engineer |
+| Responsibilities | Design, implementation, unit testing, staging validation, releases, operational improvements, and incident investigation |
+| Main Areas | Real-time stream processing, feature and inference integration, data investigations for ML validation, data quality monitoring, and Redis / inference server operations |
 
-- Apache Flink によるイベントのデコード、検証、フィルタリング、変換、マスターデータ付与、出力処理を実装
-- 検索・コマースなど複数ドメインのイベントスキーマ変更、新規属性追加、欠損値処理、センシティブカテゴリ除外に対応
-- Redis を利用した参照データの取得、キー設計、TTL 制御、再接続処理、非同期アクセスを改善
-- Apache Airflow によるマスターデータ連携 DAG の追加、リトライ／センサー設計、データソース移行、基盤バージョンアップに対応
-- Spark / SQL / Iceberg を利用したデータ変換・検証処理を整備
-- Kubernetes マニフェスト、環境別設定、シークレット参照、メッセージトピック、CI/CD ワークフローを整備
-- Python / MCP による読み取り専用の検証ツールを作成し、クエリエンジン、Redis、メッセージキューを横断する確認作業を効率化
-- モックを用いた単体テストを追加し、スキーマ境界、null、空配列、異常値などのケースを検証
+## Project 1: Real-Time Data Collection and Enrichment Platform
 
-## プロジェクト 2：リアルタイム特徴量生成・オンライン推論パイプライン
+I developed and operated a platform that processes user behavior data from multiple services in real time and transforms it for downstream analytics and recommendation processing.
 
-ユーザー行動履歴とアイテム特徴量をリアルタイムに統合し、オンライン推論 API と連携して後続システムへ特徴量・ベクトルを配信するストリーミングパイプラインを、PoC から継続して開発しています。
+- Implemented event decoding, validation, filtering, transformation, reference data enrichment, and output processing with Apache Flink.
+- Handled event schema changes, new attributes, missing values, and sensitive category exclusions across domains such as search and commerce.
+- Improved Redis reference data retrieval, key design, TTL management, reconnection, and asynchronous access.
+- Added Apache Airflow DAGs for reference data integration, designed retries and sensors, and handled source migrations and platform upgrades.
+- Built data transformation and validation processes using Spark / SQL / Iceberg.
+- Maintained Kubernetes manifests, environment configuration, secret references, message topics, and CI/CD workflows.
+- Created read-only validation tools with Python / MCP to streamline checks across query engines, Redis, and message queues.
+- Added mocked unit tests covering schema boundaries, nulls, empty arrays, and invalid values.
 
-- Kafka / メッセージキューから受信したイベントを Flink でデコードし、event time、watermark、重複排除、履歴マージ、ウィンドウ集約を実装
-- 履歴収集、前処理、特徴量参照、推論リクエスト、結果配信を独立した処理段階として設計・実装
-- Redis からの履歴・特徴量取得を同期処理から非同期処理へ移行し、接続共有、再接続、トポロジー更新、バッチ取得を改善
-- オンライン推論 API に対する非同期 HTTP / gRPC クライアント、認証更新、リトライ、タイムアウト、gzip 圧縮を実装
-- バッチ化、パーティション分散、データスキュー対策、オブジェクト生成削減、I/O の並列化により処理効率と安定性を改善
-- 遅延イベント、欠損 ID、同一時刻イベント、履歴上限、サービス別フィルタなどの境界条件を単体テストで検証
-- 個人識別子のマスキング、ログのサンプリング／レート制御、メトリクス、環境別の出力制御を整備
-- Flink のメジャーバージョン更新、コードフォーマット／静的チェック、環境別設定の一元化に対応
+## Project 2: Real-Time Feature and Inference Integration for Personalization
 
-## 代表的なアーキテクチャ
+Since the proof-of-concept stage, I have continued developing a pipeline that combines behavior history and item features, then uses an online inference API to generate and supply vectors representing user interests. These features and vectors allow downstream prediction models to reflect recent behavior in online service delivery and display decisions.
 
-以下は、担当領域を説明するために一般化した構成です。実際の社内構成やデータフローを示すものではありません。
+Alongside real-time processing development, I provide validation data requested by ML engineers, regularly aggregate history statistics, monitor feature lookups, and operate Redis and inference servers.
+
+### Real-Time Processing and Inference Integration
+
+- Decoded Kafka / message queue events in Flink and implemented event time, watermarks, deduplication, history merging, and window aggregation.
+- Designed and implemented history collection, preprocessing, feature lookup, inference requests, and result delivery as separate processing stages.
+- Migrated Redis history and feature retrieval from synchronous to asynchronous processing, improving connection sharing, reconnection, topology refresh, and batch retrieval.
+- Implemented asynchronous HTTP / gRPC clients for online inference APIs, authentication refresh, retries, timeouts, and gzip compression.
+- Improved efficiency and stability through batching, partition distribution, data skew handling, reduced object allocation, and parallel I/O.
+- Tested boundary conditions including late events, missing IDs, events with identical timestamps, history limits, and service-specific filters.
+- Added identifier masking, log sampling and rate limits, metrics, and environment-specific output controls.
+- Supported major Flink upgrades, code formatting and static checks, and centralized environment configuration.
+
+### Collaboration with ML Engineers on Validation and Investigation
+
+- Investigated real-time behavior history and item vector lookups based on the criteria ML engineers needed for offline validation.
+- Extracted selected user behavior histories to HDFS and provided them as offline validation data.
+- Regularly aggregated history lengths and data distributions to make the data characteristics and changes visible.
+- Shared findings and statistics to coordinate ongoing checks across ML validation and real-time data processing.
+
+### Data Quality Monitoring and Platform Operations
+
+- Implemented Flink metrics for item vector lookup hit rates and integrated them with Grafana for visualization and monitoring.
+- Used hit rates to measure lookup success, separately from vector content validity or model prediction quality.
+- Handled deployment, configuration changes, restarts, and monitoring for behavior-history Redis, item-vector Redis, and TensorFlow Serving inference servers.
+- Monitored platform load, inference failures, and abnormal responses, investigating across data lookups, inference APIs, and runtime infrastructure.
+
+## Representative Architecture
+
+The following diagrams abstract my responsibilities and system interactions for public presentation. Internal system names, specific connections, data definitions, model specifications, and operating values are omitted.
+
+### Online: From User Behavior to Prediction and Delivery Decisions
+
+Behavior data continuously updates features for downstream prediction systems. The diagram shows asynchronous feature updates triggered by behavior and service-side consumption of previously generated features, grouped by responsibility.
 
 ```mermaid
-flowchart LR
-    SOURCE["ユーザー行動イベント"] --> MQ["Kafka / メッセージキュー"]
-    MQ --> DECODE["Flink: Decode / Validate"]
-    DECODE --> PROCESS["Filter / Event Time / Aggregate"]
-    PROCESS --> ENRICH["History / Feature Enrichment"]
-    REDIS["Redis: 履歴・特徴量"] --> ENRICH
-    ENRICH --> INFERENCE["Online Inference API<br/>HTTP / gRPC"]
-    INFERENCE --> OUTPUT["特徴量・ベクトル出力"]
+flowchart TB
+    USER["End User"] -->|Browse / Interact| SERVICE["Online Service"]
+    SERVICE -->|Behavior Events| MQ["Kafka / Message Queue"]
 
-    BATCH["Airflow + Spark / SQL"] --> REDIS
-    OBS["Metrics / Structured Logs"] -.-> DECODE
-    OBS -.-> ENRICH
-    OBS -.-> INFERENCE
+    subgraph OWNED["My Responsibilities: Real-Time Processing Development / Data and Inference Operations"]
+        FLINK["Flink<br/>Validation / History Processing / Feature Integration"]
+        HISTORY["Redis<br/>User Behavior History"]
+        ITEMS["Redis<br/>Item Vectors"]
+        INFERENCE["Inference API / TensorFlow Serving<br/>Generate User Representations"]
+        OUTPUT["Publish Generated Features / Vectors"]
+
+        FLINK -->|Update History| HISTORY
+        HISTORY -->|Read History| FLINK
+        ITEMS -->|Item Vector Lookup| FLINK
+        FLINK <-->|Inference Requests / Results| INFERENCE
+        FLINK --> OUTPUT
+    end
+
+    MQ --> FLINK
+    OUTPUT -->|Downstream Consumption| PREDICTION["Downstream ML Predictions / Delivery Decisions"]
+    PREDICTION -->|Apply to Delivery / Display| SERVICE
+    SERVICE -->|Display Content| USER
 ```
 
-## 技術スタック
+My responsibilities include calling inference APIs and operating inference servers. Downstream model decisions and service displays are shown as consumers of the data.
 
-| 分類 | 技術 |
-| --- | --- |
-| 言語 | Java, Python, SQL, Shell |
-| ストリーム処理 | Apache Flink, Kafka, event time / watermark, 非同期 I/O, バッチ集約 |
-| データ／ワークフロー | Redis, Apache Airflow, Apache Spark, Trino, Apache Iceberg |
-| 通信／データ形式 | HTTP, gRPC, Protocol Buffers, Avro, JSON, gzip |
-| インフラ／デリバリー | Kubernetes, Docker, Maven, CI/CD, 環境別構成管理 |
-| 開発／検証ツール | MCP, Jupyter Notebook, 読み取り専用の運用診断ツール |
-| 品質／運用 | JUnit, Mockito, 静的チェック, メトリクス, 構造化ログ, ログマスキング |
+### Offline: ML Validation, Data Investigation, and Monitoring
 
-## 業務で重視していること
+In parallel with offline ML validation, I investigate requested data, provide histories for validation, produce periodic statistics, and check lookup status through metrics. Solid arrows represent data and monitoring information; dotted arrows represent investigation requests, shared findings, and operational actions.
 
-- **運用を前提とした実装**：正常系だけでなく、遅延、欠損、再接続、リトライ、バックプレッシャー、チェックポイントへの影響を考慮する
-- **検証可能性**：メトリクスと安全なログを用意し、ステージング環境で設定差分とデータフローを確認できるようにする
-- **データ保護**：ログへ生の識別子や入力データを出さず、必要最小限の情報だけで調査できるようにする
-- **段階的な改善**：既存処理との互換性を保ちながら、非同期化、バッチ化、負荷分散、テスト拡充を進める
+```mermaid
+flowchart TB
+    ML["ML Engineers<br/>Offline Evaluation / Validation"] -.->|Investigation Requests / Validation Criteria| ENGINEER["My Role<br/>Data Investigation / Validation Support / Platform Operations"]
 
-## 記載方針
+    HISTORY["User Behavior History"] -->|Extract / Store History for Validation| HDFS["HDFS<br/>Offline Validation Data"]
+    HDFS -->|Use for Validation| ML
+    HISTORY -->|Scheduled Aggregation| STATS["History Length / Data Distribution Statistics"]
+    STATS --> ML
+    STATS --> ENGINEER
 
-本ポートフォリオは、本人が実際に変更を行った Git コミットの範囲をもとに作成しています。成果を示す数値は、社外公開できる根拠がないため記載していません。また、公開リポジトリには業務コード、設定値、ログ、データ、社内文書を含めません。
+    FLINK["Flink<br/>Item Vector Lookup Metrics"] -->|Hit Rate| GRAFANA["Grafana<br/>Lookup Visualization / Monitoring"]
+    GRAFANA --> ENGINEER
+    PLATFORM["Redis / Inference Servers"] -->|Monitor Availability / Load / Inference Failures / Abnormal Responses| ENGINEER
+
+    ENGINEER -.->|History Extraction / Statistics / Lookup Investigation| HISTORY
+    ENGINEER -.->|Share Findings / Statistics| ML
+    ENGINEER -.->|Deploy / Reconfigure / Restart| PLATFORM
+```
+
+### Responsibilities and Validation Goals
+
+| Area | My Responsibilities | Purpose |
+|---|---|---|
+| Real-time data delivery | Process behavior history, look up item features, integrate inference, and publish generated results | Reflect recent behavior in downstream prediction and delivery decisions |
+| ML validation support | Respond to investigation requests, provide history data through HDFS, and aggregate history lengths and distributions | Help ML engineers understand input data and use it for offline validation |
+| Vector lookup monitoring | Implement Flink metrics and monitor hit rates in Grafana | Check whether required item vectors can be retrieved |
+| Data and inference operations | Deploy, configure, restart, and monitor Redis and TensorFlow Serving | Maintain data lookup and inference availability and identify load, failures, and abnormal responses |
+
+## Technology Stack
+
+| Category | Technologies |
+|---|---|
+| Languages | Java, Python, SQL, Shell |
+| Stream Processing | Apache Flink, Kafka, event time / watermarks, asynchronous I/O, batch aggregation |
+| Data / Workflows | Redis, HDFS, Apache Airflow, Apache Spark, Trino, Apache Iceberg |
+| ML Integration / Inference | TensorFlow Serving, online inference APIs, data provision for offline validation |
+| Communication / Data Formats | HTTP, gRPC, Protocol Buffers, Avro, JSON, gzip |
+| Infrastructure / Delivery | Kubernetes, Docker, Maven, CI/CD, environment configuration management |
+| Development / Validation Tools | MCP, Jupyter Notebook, read-only operational diagnostic tools |
+| Quality / Operations | JUnit, Mockito, static checks, Grafana, Flink metrics, structured logging, log masking |
+
+## Engineering Priorities
+
+- **Operational readiness**: Consider delays, missing data, reconnects, retries, backpressure, and checkpoint impact alongside normal processing.
+- **Verifiability**: Provide metrics and safe logs so configuration differences and data flows can be checked in staging.
+- **Data protection**: Investigate using only the necessary information without logging raw identifiers or input data.
+- **Incremental improvement**: Introduce asynchronous processing, batching, load distribution, and broader tests while preserving compatibility with existing processing.
+
+## Documentation Policy
+
+This portfolio is based on Git commits containing changes I made and on data investigations, validation support, and operations I personally performed. Numerical results are omitted because there is no supporting evidence approved for external publication. Public repositories do not include business code, configuration values, logs, data, or internal documents.
